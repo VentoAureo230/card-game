@@ -17,6 +17,7 @@ class TestCardsExercice2(unittest.TestCase):
     def test_game_launch_distributes_cards(self):
         """ Game generation should distribute cards evenly. """
         game = models.PresidentGame()
+        game.distribute_cards()
         player_1 = game.players[0]
         player_2 = game.players[1]
         print(player_1.hand)

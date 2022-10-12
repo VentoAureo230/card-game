@@ -156,10 +156,11 @@ class AIPlayer(Player):
 
 
 class PresidentGame:
-    def __init__(self, nb_players: int = 4):
+    def __init__(self, nb_players: int = 3):
         self.__generate_players(nb_players)
         self.__generate_cards()
         self.round = 0
+        self.nb_players=nb_players
 
     def __generate_players(self, nb_players: int):
         self.__players = [Player()]
