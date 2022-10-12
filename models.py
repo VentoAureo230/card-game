@@ -173,6 +173,7 @@ class PresidentGame:
         self.__deck = Deck()
         self.__deck.shuffle()
 
+
     def distribute_cards(self):
         giving_card_to_player = 0
         nb_players = len(self.__players)
