@@ -21,6 +21,7 @@ VALUES = {
 
 class Deck:
     """ Deck du jeu de société du Président. """
+
     def __init__(self):
         self.__cards: list = []
         """ Génération d'un deck de 52 cartes"""
@@ -150,8 +151,9 @@ class AIPlayer(Player):
             if best_choice is None and card.symbol >= choice and \
                     self.has_symbol(card.symbol) >= \
                     nb_cards:
-                cards_played = self._hand[index:index+nb_cards]
+                cards_played = self._hand[index:index + nb_cards]
                 best_choice = card.symbol
+                self.remove_from_hand(cards_played)
         return cards_played if best_choice is not None else []
 
 
@@ -160,11 +162,11 @@ class PresidentGame:
         self.__generate_players(nb_players)
         self.__generate_cards()
         self.round = 0
-        self.nb_players=nb_players
+        self.nb_players = nb_players
 
     def __generate_players(self, nb_players: int):
         self.__players = [Player()]
-        for _ in range(nb_players-1):
+        for _ in range(nb_players - 1):
             self.__players.append(AIPlayer())
 
     def __generate_cards(self):
@@ -174,10 +176,10 @@ class PresidentGame:
     def distribute_cards(self):
         giving_card_to_player = 0
         nb_players = len(self.__players)
-        while len(self.__deck.cards) > 0:
+        while len(self.__deck.cards) >= nb_players - giving_card_to_player:
             card = self.__deck.pick_card()
             self.__players[giving_card_to_player].add_to_hand(card)
-            giving_card_to_player = (giving_card_to_player+1) % nb_players
+            giving_card_to_player = (giving_card_to_player + 1) % nb_players
 
     @property
     def players(self):

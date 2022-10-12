@@ -18,6 +18,8 @@ def game_loop(g: PresidentGame):
         print('Your current deck is : ')
         print(g.main_player.hand, )
         print_ln()
+        for joueur in g.players:
+            print(joueur.name,"has",len(joueur.hand),"cards")
         choice = '0'
 
         while g.main_player.has_symbol(choice) == 0:
@@ -45,7 +47,7 @@ if __name__ == '__main__':
         """        *********************************************
         *** President : The cards game (TM) v.0.1 ***
         ********************************************* """)
-    g = PresidentGame()
+    g = PresidentGame(3)
     g.distribute_cards()
     game_loop(g)
     print('Thank you for playing. I hope you enjoyed !')
