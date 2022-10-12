@@ -136,7 +136,7 @@ class Player:
 class AIPlayer(Player):
     def play(self, choice, nb_cards: int) -> list:
         """
-        Play a card correspondig to what has been played on the table.
+        Play a card corresponding to what has been played on the table.
         TODO: Implement an AI
         Args:
             choice: The minimum card value to play.

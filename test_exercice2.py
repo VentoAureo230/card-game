@@ -1,6 +1,7 @@
 import unittest
 import models
 
+
 class TestCardsExercice2(unittest.TestCase):
     def test_player_constructor(self):
         player_trump = models.Player('Trump')
@@ -23,6 +24,7 @@ class TestCardsExercice2(unittest.TestCase):
         print(player_1.hand)
         self.assertTrue(len(player_1.hand) > 0)
         self.assertTrue(len(player_1.hand) >= len(player_2.hand))
+
 
 if __name__ == '__main__':
     unittest.main()

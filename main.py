@@ -31,7 +31,7 @@ def game_loop(g: PresidentGame):
             plays = ai.play(choice, nb_cards)
             print(f"{ai.name} plays \t {plays}")
 
-            # Update latest card played
+            # Update the latest card played
             if len(plays) > 0:
                 choice = plays[0].symbol
 
