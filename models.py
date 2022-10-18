@@ -187,6 +187,11 @@ class PresidentGame:
             self.__players[giving_card_to_player].add_to_hand(card)
             giving_card_to_player = (giving_card_to_player + 1) % nb_players
 
+    def player_active(self):
+        """Un joueur est défini comme actif s'il a au moins une carte en main"""
+        players = self.players
+
+
     def new_round(self):
         self.last_played_card: Card = None
 
@@ -194,39 +199,77 @@ class PresidentGame:
         """
         The main game loop.
         Loops in circle until the user wants to quit the application.
+        Args:
+            g: The President Game instance.
         """
         wanna_continue = True
-
+        players_list = []
+        for player in players_list:
+            players_list.append(player)
         while wanna_continue:
-
-            print('Your current deck is : ')
-            print(self.main_player.hand, )
-            for joueur in self.__players:
+            players_list = []
+            for player in players_list:
+                players_list.append(player)
+            for joueur in players_list:
                 print(joueur.name, "has", len(joueur.hand), "cards")
-            choice = '0'
 
-            while self.main_player.has_symbol(choice) == 0:
-                choice = input('What value do you wish to play ? ')
+            joueurs_debouts = players_list
+            choice = None
+            while len(joueurs_debouts) > 1:
+                i = 0
+                for player in joueurs_debouts:
+                    if len(player.hand) < 1:
+                        print(player.name, "wins")
+                        wanna_continue = False
+                    if choice is not None:
+                        choice_before = choice.value
+                        nb_cards = len(plays)
+                        is_first_turn = False
+                    else:
+                        nb_cards = 1
+                        choice_before = 0
+                        is_first_turn = True
+                    if player.is_human == True:
+                        print('Your current deck is : ')
+                        print(self.main_player.hand, )
+                        player_choice = None
+                        choice_player_value = 0
+                        while (self.main_player.has_symbol(
+                                player_choice) < nb_cards or choice_before > choice_player_value) and player_choice != 'ff':
+                            player_choice = input('What value do you wish to play ? ')
+                            if player_choice != 'ff':
+                                choice_player_value = VALUES[player_choice]
+                                if self.main_player.has_symbol(player_choice) > 1 and is_first_turn:
+                                    nb_cards = int(input('How many ? '))
+                            print(player_choice != 'ff')
+                        if player_choice != 'ff':
+                            plays = self.main_player.play(player_choice, nb_cards)
+                            print(f"You play {plays}")
 
-            plays = self.main_player.play(choice)
-            print(f"You play {plays}")
+                            nb_cards = len(plays)
+                            choice = plays[0]
+                        else:
+                            print('tu es nul')
+                            print(f"You skipped")
+                            plays = []
 
-            nb_cards = len(plays)
-            choice = plays[0]
-            for ai in self.ai_players:
-                plays = ai.play(choice, nb_cards)
-                print(f"{ai.name} plays \t {plays}")
 
-                # Update the latest card played
-                if len(plays) > 0:
-                    choice = plays[0]
-            for player in self.players:
-                if len(player.hand) < 1:
-                    wanna_continue = False
+                    else:
+                        plays = player.play(choice, nb_cards)
+                        print(f"{player.name} plays \t {plays}")
+
+                    # Update the latest card played
+                    if len(plays) > 0:
+                        choice = plays[0]
+                        i += 1
+                    else:
+                        print(joueurs_debouts[i].name, 'hors-jeu')
+                        joueurs_debouts.pop(i)
+
+            print('fin de la manche')
 
             # wanna_continue = input('Do you want to continue playing (y/N)? ')
             # wanna_continue = (wanna_continue == 'Y' or wanna_continue == 'y')
-
     @property
     def players(self):
         return self.__players

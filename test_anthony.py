@@ -1,6 +1,6 @@
 import unittest
-import models
 
+import models
 
 
 class TestFunctionCardGame(unittest.TestCase):
@@ -14,11 +14,18 @@ class TestFunctionCardGame(unittest.TestCase):
 
     def test_end_game(self):
         """Affche la fin de game quand il reste 1 seul joueur avec des cartes en main
-         TODO :  doit attribuer le rôle de troufion et président en fin de game si le joueur relance une partie
+         TODO :  vérifier l'attribution des rôles de troufion et président (et des vices si 4 joueurs ou plus) en fin de game si le joueur relance une partie
         """
         game = models.PresidentGame()
-        players = len(game.players)
-        self.assertTrue(len(players.hand) < 2)
+        game.distribute_cards()
+        game.player_active()
+        player_1 = game.players[0]
+        player_2 = game.players[1]
+        player_3 = game.players[2]
+        nb_players = game.player_active
+        print(player_1.hand, '\n', player_2.hand, '\n', player_3.hand)
+        self.assertTrue(nb_players == 1)
+        print('Un joueur a perdu')
 
     def test_round(self):
         """Compte le nombre de rounds dans une partie ?"""
