@@ -1,6 +1,6 @@
 import random
 import names
-
+#from random import *
 COLORS = ['♡', '♤', '♧', '♢']
 VALUES = {
     '2': 15,
@@ -87,6 +87,7 @@ class Card:
 
 
 class Player:
+    is_human = True
     def __init__(self, player_name=None):
         self._name: str = player_name if player_name is not None else \
             names.get_first_name()
@@ -108,7 +109,7 @@ class Player:
     def name(self):
         return self._name
 
-    def play(self, symbol) -> list:
+    def play(self, symbol,nb_cards) -> list:
         """
         Remove from the hand of the player, all cards having a corresponding symbol.
         Args:
@@ -118,10 +119,13 @@ class Player:
         nothing is found.
 
         """
-        cards_played = [card for card in self._hand if card.symbol ==
+        cards_played=[]
+        cards_available = [card for card in self._hand if card.symbol ==
                         symbol]
+        for i in range (nb_cards):
+            cards_played.append(cards_available.pop(0))
+
         self.remove_from_hand(cards_played)
-        print(cards_played)
         return cards_played
 
     def __repr__(self):
@@ -136,6 +140,7 @@ class Player:
 
 
 class AIPlayer(Player):
+    is_human = False
     def play(self, choice, nb_cards: int) -> list:
         """
         Play a card corresponding to what has been played on the table.
@@ -147,6 +152,8 @@ class AIPlayer(Player):
         Returns: An array of cards to play.
 
         """
+        if choice is None:
+            choice=self.hand[random.randint(0,len(self.hand)-1)]
         best_choice = None
         for index, card in enumerate(self.hand):
             if best_choice is None and card.value >= choice.value and self.has_symbol(card.symbol) >=nb_cards:
