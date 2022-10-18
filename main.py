@@ -28,7 +28,6 @@ def game_loop(g: PresidentGame):
         choice=None
         while len(joueurs_debouts)>1:
             i=0
-            print("Nouveau Tour")
             for player in joueurs_debouts:
                 if len(player.hand)<1:
                     print(player.name,"wins")
