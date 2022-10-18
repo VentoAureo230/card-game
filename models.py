@@ -121,6 +121,7 @@ class Player:
         cards_played = [card for card in self._hand if card.symbol ==
                         symbol]
         self.remove_from_hand(cards_played)
+        print(cards_played)
         return cards_played
 
     def __repr__(self):
@@ -148,9 +149,7 @@ class AIPlayer(Player):
         """
         best_choice = None
         for index, card in enumerate(self.hand):
-            if best_choice is None and card.symbol >= choice and \
-                    self.has_symbol(card.symbol) >= \
-                    nb_cards:
+            if best_choice is None and card.value >= choice.value and self.has_symbol(card.symbol) >=nb_cards:
                 cards_played = self._hand[index:index + nb_cards]
                 best_choice = card.symbol
                 self.remove_from_hand(cards_played)
@@ -163,6 +162,7 @@ class PresidentGame:
         self.__generate_cards()
         self.round = 0
         self.nb_players = nb_players
+
 
     def __generate_players(self, nb_players: int):
         self.__players = [Player()]
@@ -181,6 +181,9 @@ class PresidentGame:
             card = self.__deck.pick_card()
             self.__players[giving_card_to_player].add_to_hand(card)
             giving_card_to_player = (giving_card_to_player + 1) % nb_players
+    def new_round(self):
+        self.last_played_card:Card=None
+
 
     @property
     def players(self):

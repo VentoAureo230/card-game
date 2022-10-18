@@ -29,16 +29,20 @@ def game_loop(g: PresidentGame):
         print(f"You play {plays}")
 
         nb_cards = len(plays)
+        choice = plays[0]
         for ai in g.ai_players:
             plays = ai.play(choice, nb_cards)
             print(f"{ai.name} plays \t {plays}")
 
             # Update the latest card played
             if len(plays) > 0:
-                choice = plays[0].symbol
+                choice = plays[0]
+        for player in g.players:
+            if len(player.hand)<1:
+                wanna_continue=False
 
-        wanna_continue = input('Do you want to continue playing (y/N)? ')
-        wanna_continue = (wanna_continue == 'Y' or wanna_continue == 'y')
+        #wanna_continue = input('Do you want to continue playing (y/N)? ')
+        #wanna_continue = (wanna_continue == 'Y' or wanna_continue == 'y')
 
 
 if __name__ == '__main__':
