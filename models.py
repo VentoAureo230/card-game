@@ -149,7 +149,7 @@ class AIPlayer(Player):
         """
         best_choice = None
         for index, card in enumerate(self.hand):
-            if best_choice is None and card.value >= choice.value and self.has_symbol(card.symbol) >=nb_cards:
+            if best_choice is None and card.value >= choice.value and self.has_symbol(card.symbol) >= nb_cards:
                 cards_played = self._hand[index:index + nb_cards]
                 best_choice = card.symbol
                 self.remove_from_hand(cards_played)
@@ -163,7 +163,6 @@ class PresidentGame:
         self.round = 0
         self.nb_players = nb_players
 
-
     def __generate_players(self, nb_players: int):
         self.__players = [Player()]
         for _ in range(nb_players - 1):
@@ -173,7 +172,6 @@ class PresidentGame:
         self.__deck = Deck()
         self.__deck.shuffle()
 
-
     def distribute_cards(self):
         giving_card_to_player = 0
         nb_players = len(self.__players)
@@ -181,9 +179,46 @@ class PresidentGame:
             card = self.__deck.pick_card()
             self.__players[giving_card_to_player].add_to_hand(card)
             giving_card_to_player = (giving_card_to_player + 1) % nb_players
-    def new_round(self):
-        self.last_played_card:Card=None
 
+    def new_round(self):
+        self.last_played_card: Card = None
+
+    def game_loop(self):
+        """
+        The main game loop.
+        Loops in circle until the user wants to quit the application.
+        """
+        wanna_continue = True
+
+        while wanna_continue:
+
+            print('Your current deck is : ')
+            print(self.main_player.hand, )
+            for joueur in self.__players:
+                print(joueur.name, "has", len(joueur.hand), "cards")
+            choice = '0'
+
+            while self.main_player.has_symbol(choice) == 0:
+                choice = input('What value do you wish to play ? ')
+
+            plays = self.main_player.play(choice)
+            print(f"You play {plays}")
+
+            nb_cards = len(plays)
+            choice = plays[0]
+            for ai in self.ai_players:
+                plays = ai.play(choice, nb_cards)
+                print(f"{ai.name} plays \t {plays}")
+
+                # Update the latest card played
+                if len(plays) > 0:
+                    choice = plays[0]
+            for player in self.players:
+                if len(player.hand) < 1:
+                    wanna_continue = False
+
+            # wanna_continue = input('Do you want to continue playing (y/N)? ')
+            # wanna_continue = (wanna_continue == 'Y' or wanna_continue == 'y')
 
     @property
     def players(self):
