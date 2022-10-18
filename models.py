@@ -1,6 +1,7 @@
 import random
 import names
-#from random import *
+
+# from random import *
 COLORS = ['♡', '♤', '♧', '♢']
 VALUES = {
     '2': 15,
@@ -88,6 +89,7 @@ class Card:
 
 class Player:
     is_human = True
+
     def __init__(self, player_name=None):
         self._name: str = player_name if player_name is not None else \
             names.get_first_name()
@@ -109,7 +111,7 @@ class Player:
     def name(self):
         return self._name
 
-    def play(self, symbol,nb_cards) -> list:
+    def play(self, symbol, nb_cards) -> list:
         """
         Remove from the hand of the player, all cards having a corresponding symbol.
         Args:
@@ -119,10 +121,10 @@ class Player:
         nothing is found.
 
         """
-        cards_played=[]
+        cards_played = []
         cards_available = [card for card in self._hand if card.symbol ==
-                        symbol]
-        for i in range (nb_cards):
+                           symbol]
+        for i in range(nb_cards):
             cards_played.append(cards_available.pop(0))
 
         self.remove_from_hand(cards_played)
@@ -141,6 +143,7 @@ class Player:
 
 class AIPlayer(Player):
     is_human = False
+
     def play(self, choice, nb_cards: int) -> list:
         """
         Play a card corresponding to what has been played on the table.
@@ -153,7 +156,7 @@ class AIPlayer(Player):
 
         """
         if choice is None:
-            choice=self.hand[random.randint(0,len(self.hand)-1)]
+            choice = self.hand[random.randint(0, len(self.hand) - 1)]
         best_choice = None
         for index, card in enumerate(self.hand):
             if best_choice is None and card.value >= choice.value and self.has_symbol(card.symbol) >= nb_cards:
@@ -189,18 +192,20 @@ class PresidentGame:
 
     def player_active(self):
         """Un joueur est défini comme actif s'il a au moins une carte en main"""
-        players = self.players
-
+        players_list = []
+        for player in players_list:
+            players_list.append(player)
+        for player in players_list:
+            return player.hand
 
     def new_round(self):
         self.last_played_card: Card = None
+        pass
 
     def game_loop(self):
         """
         The main game loop.
         Loops in circle until the user wants to quit the application.
-        Args:
-            g: The President Game instance.
         """
         wanna_continue = True
         players_list = []
@@ -229,7 +234,7 @@ class PresidentGame:
                         nb_cards = 1
                         choice_before = 0
                         is_first_turn = True
-                    if player.is_human == True:
+                    if player.is_human:
                         print('Your current deck is : ')
                         print(self.main_player.hand, )
                         player_choice = None
@@ -246,13 +251,12 @@ class PresidentGame:
                             plays = self.main_player.play(player_choice, nb_cards)
                             print(f"You play {plays}")
 
-                            nb_cards = len(plays)
+                            len(plays)
                             choice = plays[0]
                         else:
                             print('tu es nul')
                             print(f"You skipped")
                             plays = []
-
 
                     else:
                         plays = player.play(choice, nb_cards)
@@ -270,6 +274,7 @@ class PresidentGame:
 
             # wanna_continue = input('Do you want to continue playing (y/N)? ')
             # wanna_continue = (wanna_continue == 'Y' or wanna_continue == 'y')
+
     @property
     def players(self):
         return self.__players
