@@ -192,11 +192,7 @@ class PresidentGame:
 
     def player_active(self):
         """Un joueur est défini comme actif s'il a au moins une carte en main"""
-        players_list = []
-        for player in players_list:
-            players_list.append(player)
-        for player in players_list:
-            return player.hand
+        return [player for player in self.__players if len(player.hand) > 0]
 
     def new_round(self):
         self.last_played_card: Card = None
