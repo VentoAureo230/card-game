@@ -1,5 +1,7 @@
 import random
+
 import names
+
 
 # from random import *
 COLORS = ['♡', '♤', '♧', '♢']
@@ -18,6 +20,8 @@ VALUES = {
     'R': 13,
     'A': 14
 }
+
+
 
 
 class Deck:
