@@ -89,11 +89,18 @@ class Card:
 
 class Player:
     is_human = True
+    is_president = False
+    is_trouduc = False
 
-    def __init__(self, player_name=None):
-        self._name: str = player_name if player_name is not None else \
-            names.get_first_name()
+    def __init__(self, player_name=None,id=None):
+        if self.is_human==True:
+            player_name='You'
+        self._name: str = player_name if player_name is not None else names.get_first_name()
+        self._id=id
         self._hand: list = []
+
+    def __eq__(self, other):
+        return self._id == other._id
 
     def add_to_hand(self, card: Card):
         self._hand.append(card)
@@ -131,7 +138,7 @@ class Player:
         return cards_played
 
     def __repr__(self):
-        return f"{self.name}\t: {self.hand}"
+        return str(self._id)#f"{self.name}\t: {self.hand}"
 
     def has_symbol(self, card_symbol) -> int:
         nb_cards = 0
@@ -139,7 +146,6 @@ class Player:
             if card.symbol == card_symbol:
                 nb_cards += 1
         return nb_cards
-
 
 class AIPlayer(Player):
     is_human = False
@@ -172,29 +178,50 @@ class PresidentGame:
         self.__generate_cards()
         self.round = 0
         self.nb_players = nb_players
+        self.troufion=None
+        self.president=None
 
     def __generate_players(self, nb_players: int):
-        self.__players = [Player()]
-        for _ in range(nb_players - 1):
-            self.__players.append(AIPlayer())
+        self.__players = [Player(None,0)]
+        for i in range(nb_players - 1):
+            self.__players.append(AIPlayer(None,i+1))
 
     def __generate_cards(self):
         self.__deck = Deck()
         self.__deck.shuffle()
 
     def distribute_cards(self):
+        self.__generate_cards()
         giving_card_to_player = 0
         nb_players = len(self.__players)
         while len(self.__deck.cards) >= nb_players - giving_card_to_player:
             card = self.__deck.pick_card()
             self.__players[giving_card_to_player].add_to_hand(card)
             giving_card_to_player = (giving_card_to_player + 1) % nb_players
+        if self.president is not None and self.troufion is not None:
+            self.cards_switch()
+    def cards_switch(self):
+        print(self.president.hand,self.troufion.hand)
+        for i in range (2):
+            troufion_card=self.troufion.hand.pop(-1)
+            i=0
+            hand=self.president.hand
+            while hand[i].value<troufion_card.value and i<len(hand):
+                i+=1
+            self.president.hand.insert(i,troufion_card)
+            i=0
+            president_card=self.president.hand.pop(0)
+            hand=self.troufion.hand
+            while hand[i].value<president_card.value and i<len(hand):
+                i+=1
+            self.troufion.hand.insert(i,president_card)
+        print(self.president.hand,self.troufion.hand)
 
     def player_active(self):
         """Un joueur est défini comme actif s'il a au moins une carte en main"""
         return [player for player in self.__players if len(player.hand) > 0]
 
-    def new_round(self):
+    def new_round(self,round_winner):
         self.last_played_card: Card = None
         pass
 
@@ -202,74 +229,102 @@ class PresidentGame:
         """
         The main game loop.
         Loops in circle until the user wants to quit the application.
+        Args:
+            g: The President Game instance.
         """
         wanna_continue = True
         players_list = []
-        for player in players_list:
+        for player in self.players:
             players_list.append(player)
+        joueurs_debouts = [x for x in players_list]
+        players_list_still_has_card = [x for x in players_list]
+        classement=1
         while wanna_continue:
-            players_list = []
-            for player in players_list:
-                players_list.append(player)
-            for joueur in players_list:
+            print('\n')
+            for joueur in players_list_still_has_card:
                 print(joueur.name, "has", len(joueur.hand), "cards")
-
-            joueurs_debouts = players_list
             choice = None
+            plays=None
+            joueurs_a_retirer = []
+            i=0
             while len(joueurs_debouts) > 1:
-                i = 0
-                for player in joueurs_debouts:
-                    if len(player.hand) < 1:
-                        print(player.name, "wins")
-                        wanna_continue = False
-                    if choice is not None:
-                        choice_before = choice.value
-                        nb_cards = len(plays)
-                        is_first_turn = False
-                    else:
-                        nb_cards = 1
-                        choice_before = 0
-                        is_first_turn = True
-                    if player.is_human:
-                        print('Your current deck is : ')
-                        print(self.main_player.hand, )
-                        player_choice = None
-                        choice_player_value = 0
-                        while (self.main_player.has_symbol(
-                                player_choice) < nb_cards or choice_before > choice_player_value) and player_choice != 'ff':
-                            player_choice = input('What value do you wish to play ? ')
-                            if player_choice != 'ff':
-                                choice_player_value = VALUES[player_choice]
-                                if self.main_player.has_symbol(player_choice) > 1 and is_first_turn:
-                                    nb_cards = int(input('How many ? '))
-                            print(player_choice != 'ff')
+                k=0
+                if i > len(joueurs_debouts) - 1:
+                    i = 0
+                player=joueurs_debouts[i]
+                if choice is not None and plays is not None:
+                    choice_before = choice.value
+                    nb_cards = len(plays)
+                    is_first_turn = False
+                else:
+                    nb_cards = 1
+                    choice_before = 0
+                    is_first_turn = True
+                if player.is_human == True:#humain
+                    print('Your current deck is : ')
+                    print(self.main_player.hand, )
+                    player_choice = None
+                    choice_player_value = 0
+                    while (self.main_player.has_symbol(
+                            player_choice) < nb_cards or choice_before > choice_player_value) and player_choice != 'ff':
+                        player_choice = input('What value do you wish to play ? ')
                         if player_choice != 'ff':
-                            plays = self.main_player.play(player_choice, nb_cards)
-                            print(f"You play {plays}")
-
-                            len(plays)
-                            choice = plays[0]
-                        else:
-                            print('tu es nul')
-                            print(f"You skipped")
-                            plays = []
-
-                    else:
-                        plays = player.play(choice, nb_cards)
-                        print(f"{player.name} plays \t {plays}")
-
-                    # Update the latest card played
-                    if len(plays) > 0:
+                            try:
+                                choice_player_value = VALUES[player_choice]
+                            except:
+                                pass
+                            if self.main_player.has_symbol(player_choice) > 1 and is_first_turn:
+                                nb_cards = int(input('How many ? '))
+                            else:
+                                nb_cards=1
+                    if player_choice != 'ff':
+                        plays = self.main_player.play(player_choice, nb_cards)
+                        print(f"You play {plays}")
                         choice = plays[0]
-                        i += 1
                     else:
-                        print(joueurs_debouts[i].name, 'hors-jeu')
-                        joueurs_debouts.pop(i)
-
-            print('fin de la manche')
-
-            # wanna_continue = input('Do you want to continue playing (y/N)? ')
-            # wanna_continue = (wanna_continue == 'Y' or wanna_continue == 'y')
+                        print(f"You skipped")
+                        plays = []
+                else:#bot
+                    plays = player.play(choice, nb_cards)
+                    print(f"{player.name} plays \t {plays}")
+                if len(player.hand) < 1:
+                    print(player.name, "n'as plus de carte")
+                    players_list_still_has_card.remove(player)
+                    joueurs_a_retirer.append(player)
+                    if classement==1:
+                        self.president=player
+                        player.is_president=True
+                    classement+=1
+                # Update the latest card played
+                elif len(plays) > 0:
+                    choice = plays[0]
+                    i+=1
+                else:
+                    joueurs_a_retirer.append(player)
+                k+=1
+                for joueur_a_retirer in joueurs_a_retirer:
+                    joueurs_debouts.remove(joueur_a_retirer)
+                joueurs_a_retirer=[]
+            if len(players_list_still_has_card) == 1:
+                self.troufion=players_list_still_has_card[0]
+                self.troufion.is_trouduc = True
+                players_list_still_has_card[0]._hand=[]
+                wanna_continue = False
+            else:
+                round_winner = joueurs_debouts[0].name
+                print(round_winner, 'gagne, fin de la manche')
+                j = 0
+                joueurs_debouts = []
+                for player in players_list_still_has_card:
+                    if player.name == round_winner:
+                        z = 0
+                        while players_list_still_has_card[j].name != round_winner or z == 0:
+                            joueurs_debouts.append(players_list_still_has_card[j])
+                            z += 1
+                            j += 1
+                            if j >= len(players_list_still_has_card):
+                                j = 0
+                    j += 1
 
     @property
     def players(self):
