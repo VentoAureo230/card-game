@@ -1,5 +1,3 @@
-import tkinter
-
 from models import PresidentGame, Root
 
 if __name__ == '__main__':

@@ -375,7 +375,7 @@ class Root(Tk):
         super().__init__()
         self.title('Jeu du président')
         self.configure(bg='green')
-        self.geometry('1200x800')
+        self.geometry('1920x1080')
         self.resizable(height=False, width=False)
 
         """Homepage du jeu"""
@@ -387,14 +387,9 @@ class Root(Tk):
         self.btn_play.pack()
         self.display_homepage()
 
-        # Ecran de jeu
+        # Homepage
         self.play = Frame(self, bg="green")
-        self.input_player = Entry(self.play)
-        self.input_player.pack()
-        self.player_label = Label(self.play, text="Combien de joueur souhaitez-vous dans vos parties ?")
-        self.player_label.pack()
         self.setup_ui()
-        self.mainloop()
 
     def setup_ui(self):
         """Gestion de la barre de navigation de l'application"""
@@ -422,8 +417,6 @@ class Root(Tk):
                                  command=lambda: [self.display_homepage(), self.hide_game()])
         self.btn_return.pack()
 
-        self.game.pack()
-
     def restart_game(self):
         """Lance une nouvelle partie depuis l'onglet jeu dans la barre de navigation"""
         result = askquestion("Nouvelle partie",
@@ -431,6 +424,7 @@ class Root(Tk):
                              "sauvegardée.",
                              icon='info')
         if result == 'yes':
+            self.hide_homepage()
             self.new_game()
         else:
             pass
@@ -456,34 +450,61 @@ class Root(Tk):
         self.geometry(size)
 
     def display_homepage(self):
+        self.display_game_screen()
         self.home.pack()
 
     def hide_homepage(self):
         self.home.forget()
 
     def display_parameters(self):
+        """Affichage de la page des paremètres de jeu, change la taille de l'écran, changez de pseudo"""
         self.parameters = Frame(self)
+
+        """Selection de la taille d'écran"""
         self.size_label = Label(self.parameters, text="Sélectionnez une taille d'écran :")
         self.size_label.pack()
         self.size_label_800_450 = Button(self.parameters, text="800x450", command=lambda: self.set_size('800x450'))
         self.size_label_800_450.pack()
         self.size_label_1200_800 = Button(self.parameters, text="1200x800", command=lambda: self.set_size('1200x800'))
         self.size_label_1200_800.pack()
+        self.size_label_1920_1080 = Button(self.parameters, text="1920x1080", command=lambda: self.set_size('1920x1080'))
+        self.size_label_1920_1080.pack()
+
+        """Changer le pseudo du joueur"""
         self.player_name_label = Label(self.parameters, text="Votre pseudo :")
         self.player_name_label.pack()
-        self.player_name_input = Entry(self.parameters, validate='focus')
+        self.player_name_input = Entry(self.parameters)
         self.player_name_input.pack()
+        self.myLabel = Label(self.parameters, text='')
+        self.myLabel.pack()
 
-        self.btn_return = Button(self.parameters, text="Retour",
+        """Changer le nombre de joueur dans une partie"""
+        self.player_amount_label = Label(self.parameters, text="Combien de joueur souhaitez-vous dans vos parties ?")
+        self.player_amount_label.pack()
+
+        self.player_amount_input = Entry(self.parameters)
+        self.player_amount_input.pack()
+        self.player_amount_btn = Button(self.parameters, text="Valider")
+        self.player_amount_btn.pack()
+
+        """Bouton retour vers la homepage"""
+        self.btn_return = Button(self.parameters, pady=0,  text="Retour",
                                  command=lambda: [self.display_homepage(), self.hide_parameters()])
         self.btn_return.pack()
         self.parameters.pack()
+
+    def form_in_param(self):
+        """Changer son pseudo"""
+        self.name_input_btn = Button(self.parameters, text="Valider", command=self.display_parameters.get())
+        self.name_input_btn.pack()
+
+
 
     def hide_parameters(self):
         self.parameters.forget()
 
     def display_game_screen(self):
-        pass
+        self.game.pack()
 
     def resize_cards(card):
         """Affiche les cartes et garde le ratio de la carte en fonction de l'écran de base"""
@@ -497,14 +518,35 @@ class Root(Tk):
 
     def player_hand(self):
         """Affiche les cartes du joueur dans une section en bas de l'écran"""
-        player_frame = Frame(self, bg="green")
-        player_frame.pack()
 
-        card_in_frame = LabelFrame(player_frame, text="Ma main", bd=0)
-        card_in_frame.grid(row=0, column=0, padx=20, ipadx=20)
+        player_frame = LabelFrame(self, text="Joueur", bd=0)
+        player_frame.pack(padx=20, ipadx=20)
 
+        """Ajoute 7 cartes dans la main du joueur"""
+
+        card_in_frame_1 = Label(player_frame, text="")
+        card_in_frame_1.grid(row=0, column=0, padx=20, ipadx=20)
+
+        card_in_frame_2 = Label(player_frame, text="")
+        card_in_frame_2.grid(row=0, column=1, padx=20, ipadx=20)
+
+        card_in_frame_3 = Label(player_frame, text="")
+        card_in_frame_3.grid(row=0, column=2, padx=20, ipadx=20)
+
+        card_in_frame_4 = Label(player_frame, text="")
+        card_in_frame_4.grid(row=0, column=3, padx=20, ipadx=20)
+
+        card_in_frame_5 = Label(player_frame, text="")
+        card_in_frame_5.grid(row=0, column=4, padx=20, ipadx=20)
+
+        card_in_frame_6 = Label(player_frame, text="")
+        card_in_frame_6.grid(row=0, column=5, padx=20, ipadx=20)
+
+        card_in_frame_7 = Label(player_frame, text="")
+        card_in_frame_7.grid(row=0, column=6, padx=20, ipadx=20)
     def enemy_hand(self):
-        for enemy in len(PresidentGame.nb_players) - 1:
+        g = PresidentGame()
+        for enemy_frame in len(g.nb_players) - 1:
             enemy_frame = Frame(self, bg="green")
             enemy_frame.pack()
 
