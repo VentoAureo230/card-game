@@ -410,12 +410,18 @@ class Root(Tk):
 
     def new_game(self):
         """Démarrage de la partie"""
-        g = PresidentGame()
-
         self.game = Frame(self)
         self.btn_return = Button(self.game, text="Homepage",
                                  command=lambda: [self.display_homepage(), self.hide_game()])
         self.btn_return.pack()
+        image = Image.open("images/Cartes/2 carreau.png")
+        photo = ImageTk.PhotoImage(image)
+
+        canv = Canvas(self, width=photo.width(), height=photo.height())
+
+        canv.create_image(0, 0, image=photo, anchor=NW)
+        canv.pack()
+        self.game.pack()
 
     def restart_game(self):
         """Lance une nouvelle partie depuis l'onglet jeu dans la barre de navigation"""
@@ -429,28 +435,7 @@ class Root(Tk):
         else:
             pass
 
-    def forfeit(self):
-        """Quitte la partie en cours"""
-        result = askquestion("Abandon", "Voulez-vous abandonner ?", icon="warning")
-        if result == 'yes':
-            self.quit()
-        else:
-            pass
-
-    def info(self):
-        """Affiche les crédits"""
-        result = showinfo("Crédit", "Jeu du président développer par Anthony Mény et Gillian Charra", icon="info")
-        if result == 'yes':
-            pass
-        else:
-            pass
-
-    def set_size(self, size):
-        """Gère la taille de l'écran"""
-        self.geometry(size)
-
     def display_homepage(self):
-        self.display_game_screen()
         self.home.pack()
 
     def hide_homepage(self):
@@ -498,13 +483,11 @@ class Root(Tk):
         self.name_input_btn = Button(self.parameters, text="Valider", command=self.display_parameters.get())
         self.name_input_btn.pack()
 
-
-
     def hide_parameters(self):
         self.parameters.forget()
 
     def display_game_screen(self):
-        self.game.pack()
+        pass
 
     def resize_cards(card):
         """Affiche les cartes et garde le ratio de la carte en fonction de l'écran de base"""
@@ -544,6 +527,7 @@ class Root(Tk):
 
         card_in_frame_7 = Label(player_frame, text="")
         card_in_frame_7.grid(row=0, column=6, padx=20, ipadx=20)
+
     def enemy_hand(self):
         g = PresidentGame()
         for enemy_frame in len(g.nb_players) - 1:
@@ -555,3 +539,23 @@ class Root(Tk):
 
     def hide_game(self):
         self.game.forget()
+
+    def forfeit(self):
+        """Quitte la partie en cours"""
+        result = askquestion("Abandon", "Voulez-vous abandonner ?", icon="warning")
+        if result == 'yes':
+            self.quit()
+        else:
+            pass
+
+    def info(self):
+        """Affiche les crédits"""
+        result = showinfo("Crédit", "Jeu du président développer par Anthony Mény et Gillian Charra", icon="info")
+        if result == 'yes':
+            pass
+        else:
+            pass
+
+    def set_size(self, size):
+        """Gère la taille de l'écran"""
+        self.geometry(size)
