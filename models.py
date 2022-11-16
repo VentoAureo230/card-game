@@ -414,14 +414,8 @@ class Root(Tk):
         self.btn_return = Button(self.game, text="Homepage",
                                  command=lambda: [self.display_homepage(), self.hide_game()])
         self.btn_return.pack()
-        image = Image.open("images/Cartes/2 carreau.png")
-        photo = ImageTk.PhotoImage(image)
-
-        canv = Canvas(self, width=photo.width(), height=photo.height())
-
-        canv.create_image(0, 0, image=photo, anchor=NW)
-        canv.pack()
-        self.game.pack()
+        self.player_hand()
+        self.enemy_hand()
 
     def restart_game(self):
         """Lance une nouvelle partie depuis l'onglet jeu dans la barre de navigation"""
@@ -449,19 +443,19 @@ class Root(Tk):
         self.size_label = Label(self.parameters, text="Sélectionnez une taille d'écran :")
         self.size_label.pack()
         self.size_label_800_450 = Button(self.parameters, text="800x450", command=lambda: self.set_size('800x450'))
-        self.size_label_800_450.pack()
+        self.size_label_800_450.pack(pady=5)
         self.size_label_1200_800 = Button(self.parameters, text="1200x800", command=lambda: self.set_size('1200x800'))
-        self.size_label_1200_800.pack()
+        self.size_label_1200_800.pack(pady=5)
         self.size_label_1920_1080 = Button(self.parameters, text="1920x1080", command=lambda: self.set_size('1920x1080'))
-        self.size_label_1920_1080.pack()
+        self.size_label_1920_1080.pack(pady=5)
 
         """Changer le pseudo du joueur"""
         self.player_name_label = Label(self.parameters, text="Votre pseudo :")
         self.player_name_label.pack()
         self.player_name_input = Entry(self.parameters)
         self.player_name_input.pack()
-        self.myLabel = Label(self.parameters, text='')
-        self.myLabel.pack()
+        self.player_name_btn = Button(self.parameters, text="Valider")
+        self.player_name_btn.pack(pady=10)
 
         """Changer le nombre de joueur dans une partie"""
         self.player_amount_label = Label(self.parameters, text="Combien de joueur souhaitez-vous dans vos parties ?")
@@ -470,12 +464,12 @@ class Root(Tk):
         self.player_amount_input = Entry(self.parameters)
         self.player_amount_input.pack()
         self.player_amount_btn = Button(self.parameters, text="Valider")
-        self.player_amount_btn.pack()
+        self.player_amount_btn.pack(pady=10)
 
         """Bouton retour vers la homepage"""
         self.btn_return = Button(self.parameters, pady=0,  text="Retour",
                                  command=lambda: [self.display_homepage(), self.hide_parameters()])
-        self.btn_return.pack()
+        self.btn_return.pack(pady=15)
         self.parameters.pack()
 
     def form_in_param(self):
@@ -485,9 +479,6 @@ class Root(Tk):
 
     def hide_parameters(self):
         self.parameters.forget()
-
-    def display_game_screen(self):
-        pass
 
     def resize_cards(card):
         """Affiche les cartes et garde le ratio de la carte en fonction de l'écran de base"""
@@ -502,40 +493,53 @@ class Root(Tk):
     def player_hand(self):
         """Affiche les cartes du joueur dans une section en bas de l'écran"""
 
-        player_frame = LabelFrame(self, text="Joueur", bd=0)
-        player_frame.pack(padx=20, ipadx=20)
+        self.player_frame = LabelFrame(self, text="Joueur", bd=0)
+        self.player_frame.pack(padx=20, ipadx=20)
+
+        """Instanciation de 7 image de cartes"""
+
+        img1 = PhotoImage(file="./images/Cartes/4 carreau.png")
+        img2 = PhotoImage(file="./images/Cartes/2 coeur.png")
+        img3 = PhotoImage(file="./images/Cartes/10 trefle.png")
+        img4 = PhotoImage(file="./images/Cartes/7 pique.png")
+        img5 = PhotoImage(file="./images/Cartes/valet pique.png")
+        img6 = PhotoImage(file="./images/Cartes/dame coeur.png")
+        img7 = PhotoImage(file="./images/Cartes/2 pique.png")
 
         """Ajoute 7 cartes dans la main du joueur"""
 
-        card_in_frame_1 = Label(player_frame, text="")
+        card_in_frame_1 = Button(self.player_frame, image=img1)
         card_in_frame_1.grid(row=0, column=0, padx=20, ipadx=20)
 
-        card_in_frame_2 = Label(player_frame, text="")
+        card_in_frame_2 = Button(self.player_frame, image=img2)
         card_in_frame_2.grid(row=0, column=1, padx=20, ipadx=20)
 
-        card_in_frame_3 = Label(player_frame, text="")
+        card_in_frame_3 = Button(self.player_frame, image=img3)
         card_in_frame_3.grid(row=0, column=2, padx=20, ipadx=20)
 
-        card_in_frame_4 = Label(player_frame, text="")
+        card_in_frame_4 = Button(self.player_frame, image=img4)
         card_in_frame_4.grid(row=0, column=3, padx=20, ipadx=20)
 
-        card_in_frame_5 = Label(player_frame, text="")
+        card_in_frame_5 = Button(self.player_frame, image=img5)
         card_in_frame_5.grid(row=0, column=4, padx=20, ipadx=20)
 
-        card_in_frame_6 = Label(player_frame, text="")
+        card_in_frame_6 = Button(self.player_frame, image=img6)
         card_in_frame_6.grid(row=0, column=5, padx=20, ipadx=20)
 
-        card_in_frame_7 = Label(player_frame, text="")
+        card_in_frame_7 = Button(self.player_frame, image=img7)
         card_in_frame_7.grid(row=0, column=6, padx=20, ipadx=20)
 
     def enemy_hand(self):
-        g = PresidentGame()
-        for enemy_frame in len(g.nb_players) - 1:
-            enemy_frame = Frame(self, bg="green")
-            enemy_frame.pack()
 
-            card_in_frame = LabelFrame(enemy_frame, text='{}', bd=0)
-            card_in_frame.pack(padx=20, ipadx=20)
+        self.enemy_frame = LabelFrame(self, text="Adversaire", bd=0)
+        self.enemy_frame.pack(padx=20, ipadx=20)
+
+        """Dos de carte"""
+
+        card_back = PhotoImage(file="./images/Cartes/back_card.png")
+
+        card_in_frame = Label(self.enemy_frame, image=card_back, bd=0)
+        card_in_frame.pack()
 
     def hide_game(self):
         self.game.forget()
